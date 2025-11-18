@@ -209,21 +209,29 @@
                 timer = setInterval(tick, 1000);
             }
 
-            function tick() {
-                if (timeLeft <= 0) {
-                    handleTimerEnd();
-                    return;
-                }
-                timerDisplay.textContent = timeLeft;
-                const current = workoutSequence[currentExerciseIndex];
-                const progress = Math.min(1, (current.duration - (timeLeft - 1)) / current.duration);
-                const offset = CIRCLE_CIRCUMFERENCE * (1 - progress);
-                progressCircle.style.transition = 'stroke-dashoffset 1s linear';
-                progressCircle.style.strokeDashoffset = offset;
+         function tick() {
+    if (timeLeft <= 0) {
+        handleTimerEnd();
+        return;
+    }
+    timerDisplay.textContent = timeLeft;
+    const current = workoutSequence[currentExerciseIndex];
 
-                if (timeLeft - 1 <= 2 && timeLeft - 1 >= 0) playCountdownBeep();
-                timeLeft--;
-            }
+    // --- NEW CODE STARTS HERE ---
+    // Check if we are doing the Side Plank and if we are exactly halfway through
+    if (current.name === "Side Plank" && timeLeft === (current.duration / 2)) {
+        playHalfwayBeep();
+    }
+    // --- NEW CODE ENDS HERE ---
+
+    const progress = Math.min(1, (current.duration - (timeLeft - 1)) / current.duration);
+    const offset = CIRCLE_CIRCUMFERENCE * (1 - progress);
+    progressCircle.style.transition = 'stroke-dashoffset 1s linear';
+    progressCircle.style.strokeDashoffset = offset;
+
+    if (timeLeft - 1 <= 2 && timeLeft - 1 >= 0) playCountdownBeep();
+    timeLeft--;
+}
             
             function handleTimerEnd() {
                 clearInterval(timer);
@@ -297,6 +305,7 @@
 
             function playCountdownBeep() { playNote(880, 0.1, 'sine'); }
             function playStartBeep() { playNote(440, 0.2, 'triangle'); }
+            function playHalfwayBeep() { playNote(600, 0.15, 'sine'); }
             function playCompleteChime() { 
                 if (!isAudioReady) return;
                 playNote(523.25, 0.3); playNote(659.25, 0.3); playNote(783.99, 0.3); playNote(1046.50, 0.4);
