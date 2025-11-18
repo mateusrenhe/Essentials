@@ -9,111 +9,77 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" onerror="alert('CRITICAL ERROR: Tailwind CSS failed to load.\n\n1. Check your internet connection.\n2. Disable AdBlockers for this page.\n3. If on Windows, Right Click the file > Properties > Check \'Unblock\'.')"></script>
     
     <style>
-        /* Use the Inter font family */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        /* Style for the SVG progress circle transition */
-        #progressCircle {
-            /* The transition is now controlled via JavaScript */
-        }
     </style>
 </head>
-<!-- 
-  EDIT 1: 
-  Removed 'items-center' (which centers vertically) on mobile.
-  Added 'sm:items-center' to re-apply vertical centering on small screens and up.
-  This allows the <main> element to fill the screen's height on mobile.
--->
+
+<div class="hidden 
+    text-blue-400 text-blue-500 text-blue-600 
+    text-green-400 text-green-500 text-green-600 
+    text-indigo-400 text-indigo-500 text-indigo-600 
+    text-gray-400 text-gray-500 text-gray-600">
+</div>
+
 <body class="bg-gray-800 md:bg-gray-900 text-gray-100 flex justify-center min-h-dvh overflow-hidden md:overflow-auto sm:items-center">
 
-    <!-- 
-      EDIT 2:
-      - Added 'flex flex-col justify-between min-h-screen' to make it a full-height flex column on mobile, with space-between justification.
-      - Added 'sm:block sm:min-h-0' to revert it to a standard block element on small screens and up.
-      - Changed 'rounded-2xl md:shadow-xl' to 'sm:rounded-2xl sm:shadow-xl' so that it only looks like a card on non-mobile screens.
-    -->
     <main class="w-full max-w-md p-6 sm:p-10 bg-gray-800 text-center flex flex-col justify-around min-h-dvh sm:block sm:min-h-0 sm:rounded-2xl sm:shadow-xl">
         
-        <!-- Status Display -->
         <div id="statusEl" class="h-8 text-2xl font-bold uppercase tracking-wider text-blue-500">
             7 Minute Workout
         </div>
         
-        <!-- Current Exercise Display -->
         <div id="exerciseEl" class="h-16 text-5xl sm:text-4xl font-bold my-4 flex items-center justify-center">
             Get Ready
         </div>
 
-        <!-- Timer Element -->
         <div id="timerEl" class="relative w-56 h-56 sm:w-64 sm:h-64 mx-auto my-6 rounded-full shadow-inner flex items-center justify-center bg-gray-700 cursor-default">
-            <!-- SVG Circle -->
             <svg class="w-full h-full" viewBox="0 0 120 120">
-                <!-- Background Circle -->
                 <circle class="text-gray-600" cx="60" cy="60" r="54" fill="none" stroke="currentColor" stroke-width="12" />
-                
-                <!-- Progress Circle -->
                 <circle id="progressCircle" class="text-blue-500" cx="60" cy="60" r="54" fill="none"
                     stroke="currentColor" stroke-width="12"
                     transform="rotate(-90 60 60)"
                     stroke-dasharray="339.29" 
-                    stroke-dashoffset="339.29" /> <!-- Start at 0% full -->
+                    stroke-dashoffset="339.29" /> 
             </svg>
             
-            <!-- Timer Number Display -->
             <div id="timerDisplay" class="absolute text-8xl sm:text-8xl font-black text-indigo-400">10</div>
             
-            <!-- Pause/Play Icon Overlay -->
             <div id="pausePlayOverlay" class="absolute inset-0 w-full h-full rounded-full bg-gray-800/90 flex items-center justify-center hidden transition-opacity duration-300">
-                
-                <!-- Pause Icon (Cleaned up version) -->
-                <svg id="pauseIcon" class="w-20 h-20 text-blue-400 hidden" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 00-.75.75v12c0 .414.336.75.75.75h2.5a.75.75 0 00.75-.75v-12a.75.75 0 00-.75-.75h-2.5zm8 0a.75.75 0 00-.75.75v12c0 .414.336.75.75.75h2.5a.75.75 0 00.75-.75v-12a.75.75 0 00-.75-.75h-2.5z" clip-rule="evenodd" />
-                </svg>
-
-                <!-- Play Icon (Cleaned up version) -->
-                <svg id="playIcon" class="w-20 h-20 text-blue-400 hidden" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
-                </svg>
+                <svg id="pauseIcon" class="w-20 h-20 text-blue-400 hidden" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 00-.75.75v12c0 .414.336.75.75.75h2.5a.75.75 0 00.75-.75v-12a.75.75 0 00-.75-.75h-2.5zm8 0a.75.75 0 00-.75.75v12c0 .414.336.75.75.75h2.5a.75.75 0 00.75-.75v-12a.75.75 0 00-.75-.75h-2.5z" clip-rule="evenodd" /></svg>
+                <svg id="playIcon" class="w-20 h-20 text-blue-400 hidden" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" /></svg>
             </div>
         </div>
 
-        <!-- Next Up Display -->
         <div class="h-14 uppercase">
             <div class="text-lg font-semibold text-gray-400 tracking-wide">Next Up:</div>
             <div id="nextExerciseEl" class="text-2xl font-bold">Jumping Jacks</div>
         </div>
 
-        <!-- Start/Pause/Resume Button -->
         <button id="startButton" class="w-full p-4 mt-6 bg-blue-500 text-white rounded-lg text-xl font-bold uppercase hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-800 transition-all duration-300 transform active:scale-95">
             Start Workout
         </button>
 
     </main>
 
-    <!-- Generic Message Box -->
     <div id="messageBox" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
         <div class="bg-gray-800 rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
             <h3 id="messageTitle" class="text-lg font-bold mb-4">Message</h3>
             <p id="messageText" class="text-gray-300 mb-6">This is a message.</p>
-            <button id="messageCloseButton" class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-800">
-                OK
-            </button>
+            <button id="messageCloseButton" class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-800">OK</button>
         </div>
     </div>
-
 
     <script>
         window.addEventListener('load', () => {
             
-            // --- DOM Elements ---
             const statusEl = document.getElementById('statusEl');
             const exerciseEl = document.getElementById('exerciseEl');
             const timerDisplay = document.getElementById('timerDisplay');
@@ -125,7 +91,6 @@
             const playIcon = document.getElementById('playIcon');
             const progressCircle = document.getElementById('progressCircle');
 
-            // --- Message Box Elements ---
             const messageBox = document.getElementById('messageBox');
             const messageTitle = document.getElementById('messageTitle');
             const messageText = document.getElementById('messageText');
@@ -141,7 +106,6 @@
                 messageBox.classList.add('hidden');
             });
 
-            // --- Native Web Audio API Setup ---
             let audioContext;
             let isAudioReady = false;
 
@@ -149,12 +113,10 @@
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 isAudioReady = (audioContext.state === 'running');
             } catch (e) {
-                console.error("Web Audio API is not supported in this browser.", e);
-                showMessage("Audio Error", "Your browser does not support the Web Audio API needed for sounds.");
+                console.error("Web Audio API not supported", e);
+                showMessage("Audio Error", "Your browser does not support Web Audio.");
                 startButton.disabled = true;
                 startButton.textContent = "Audio Not Supported";
-                startButton.classList.add('opacity-50', 'cursor-not-allowed');
-                return;
             }
 
             async function unlockAudio() {
@@ -162,35 +124,14 @@
                 try {
                     await audioContext.resume();
                     isAudioReady = true;
-                    console.log("Audio Context Unlocked.");
-                } catch (e) {
-                    console.warn("Could not unlock audio context:", e);
-                }
+                } catch (e) { console.warn(e); }
             }
             
-            // Try to unlock on any first click, for restrictive environments
-            // document.body.addEventListener('click', unlockAudio, { once: true });
-            
-            // --- Workout Definition ---
-            const EXERCISES = [
-                "Jumping Jacks",
-                "Wall Sit",
-                "Push-ups",
-                "Abdominal Crunch",
-                "Step-up Chair",
-                "Squats",
-                "Triceps Dip Chair",
-                "Plank",
-                "High Knees",
-                "Lunges",
-                "Push-up Rotation",
-                "Side Plank"
-            ];
-            
+            const EXERCISES = ["Jumping Jacks","Wall Sit","Push-ups","Abdominal Crunch","Step-up Chair","Squats","Triceps Dip Chair","Plank","High Knees","Lunges","Push-up Rotation","Side Plank"];
             const READY_TIME = 10;
             const WORK_TIME = 30;
             const REST_TIME = 10;
-            const CIRCLE_CIRCUMFERENCE = 339.29; // 2 * pi * 54
+            const CIRCLE_CIRCUMFERENCE = 339.29;
 
             let workoutSequence = [];
             let currentExerciseIndex = 0;
@@ -199,20 +140,16 @@
             let isPaused = false;
             let isStarted = false;
 
-            // --- Core Functions ---
-
             async function handleStartPauseClick() {
-                // Ensure audio is ready *before* starting
                 if (!isAudioReady) {
                     await unlockAudio();
                     if (!isAudioReady) {
-                        showMessage("Audio Error", "Could not start audio. Please click the screen once to enable audio, then try again.");
+                        showMessage("Audio Error", "Please click the screen once to enable audio.");
                         return;
                     }
                 }
-
                 if (!isStarted) {
-                    playWorkoutStartChime(); // Play the new start sound
+                    playWorkoutStartChime();
                     startWorkout();
                 } else {
                     togglePause();
@@ -222,14 +159,12 @@
             function createWorkoutSequence() {
                 workoutSequence = [];
                 workoutSequence.push({ type: 'ready', name: 'Get Ready', duration: READY_TIME });
-
                 EXERCISES.forEach((exercise, index) => {
                     workoutSequence.push({ type: 'work', name: exercise, duration: WORK_TIME });
                     if (index < EXERCISES.length - 1) {
                         workoutSequence.push({ type: 'rest', name: 'Rest', duration: REST_TIME });
                     }
                 });
-
                 workoutSequence.push({ type: 'complete', name: 'Workout Complete!', duration: 0 });
             }
 
@@ -238,35 +173,23 @@
                 isPaused = false;
                 currentExerciseIndex = 0;
                 clearInterval(timer);
-                
                 createWorkoutSequence();
-                loadExercise(currentExerciseIndex); // This will set up the first state
-                startTimer(); // This will immediately call tick()
-
+                loadExercise(currentExerciseIndex);
+                startTimer();
                 startButton.textContent = "Pause";
                 pausePlayOverlay.classList.add('hidden');
                 pauseIcon.classList.add('hidden');
-                playIcon.classList.remove('hidden'); // Show play icon
+                playIcon.classList.remove('hidden');
             }
 
-            /**
-             * Loads an exercise, resets the timer display, and updates text.
-             * This function does NOT start the timer.
-             */
             function loadExercise(index) {
                 const current = workoutSequence[index];
                 const next = workoutSequence[index + 1] || { name: "All Done!" };
-
                 timeLeft = current.duration;
-
-                // Update status text - Always keep the main title
                 statusEl.textContent = "7 Minute Workout";
-
                 exerciseEl.textContent = current.name;
                 nextExerciseEl.textContent = next.name;
                 updateColors(current.type);
-
-                // Instantly reset the timer display and circle
                 resetTimerDisplay(); 
 
                 if (current.type === 'complete') {
@@ -275,78 +198,45 @@
                     isStarted = false;
                     clearInterval(timer);
                     pausePlayOverlay.classList.remove('hidden');
-                    pauseIcon.classList.remove('hidden'); // Show pause icon
+                    pauseIcon.classList.remove('hidden');
                     playIcon.classList.add('hidden');
                 }
             }
             
             function startTimer() {
-                clearInterval(timer); // Clear any existing timer
-                tick(); // Call tick immediately to start the first animation
-                timer = setInterval(tick, 1000); // Then set the interval
+                clearInterval(timer);
+                tick();
+                timer = setInterval(tick, 1000);
             }
 
-            /**
-             * The main timer "tick" function.
-             * Shows the current number, *while* animating to the *next* number's state.
-             */
             function tick() {
                 if (timeLeft <= 0) {
                     handleTimerEnd();
                     return;
                 }
-                
-                // --- Animation Sync Fix ---
-                // 1. Show the *current* time left
                 timerDisplay.textContent = timeLeft;
-
-                // 2. Calculate the progress for the *end* of this second (i.e., timeLeft - 1)
                 const current = workoutSequence[currentExerciseIndex];
-                const totalDuration = current.duration;
-                
-                // Calculate progress for one second *from* now
-                // Ensure progress is never greater than 1
-                const progress = Math.min(1, (totalDuration - (timeLeft - 1)) / totalDuration);
+                const progress = Math.min(1, (current.duration - (timeLeft - 1)) / current.duration);
                 const offset = CIRCLE_CIRCUMFERENCE * (1 - progress);
-
-                // 3. Set the 1s animation and start it
                 progressCircle.style.transition = 'stroke-dashoffset 1s linear';
                 progressCircle.style.strokeDashoffset = offset;
 
-                // 4. Play audio cues for the *upcoming* number (e.g., when 4 shows, beep for 3)
-                if (timeLeft - 1 === 2 || timeLeft - 1 === 1 || timeLeft - 1 === 0) {
-                    playCountdownBeep();
-                }
-
-                // 5. Decrement time *after* setting up the animation
+                if (timeLeft - 1 <= 2 && timeLeft - 1 >= 0) playCountdownBeep();
                 timeLeft--;
             }
             
             function handleTimerEnd() {
                 clearInterval(timer);
                 currentExerciseIndex++;
-                
                 if (currentExerciseIndex < workoutSequence.length) {
-                    const currentType = workoutSequence[currentExerciseIndex].type;
-                    if (currentType === 'work' || currentType === 'rest') {
-                        playStartBeep();
-                    }
-                    
-                    loadExercise(currentExerciseIndex); // This resets the dial
-                    
-                    if (currentType !== 'complete') {
-                        // **UNIVERSAL FIX**: Change delay from 0 to 50ms.
-                        // This gives the browser time to render the 'transition: none'
-                        // from resetTimerDisplay() *before* starting the new animation.
-                        setTimeout(startTimer, 50); 
-                    }
+                    if (workoutSequence[currentExerciseIndex].type !== 'complete') playStartBeep();
+                    loadExercise(currentExerciseIndex);
+                    if (workoutSequence[currentExerciseIndex].type !== 'complete') setTimeout(startTimer, 50);
                 }
             }
 
             function togglePause() {
-                if (!isStarted || workoutSequence[currentExerciseIndex].type === 'complete') {
-                    return;
-                }
+                if (!isStarted || workoutSequence[currentExerciseIndex].type === 'complete') return;
                 isPaused = !isPaused;
                 pausePlayOverlay.classList.toggle('hidden', !isPaused);
                 pauseIcon.classList.toggle('hidden', !isPaused);
@@ -354,133 +244,71 @@
 
                 if (isPaused) {
                     startButton.textContent = "Resume";
-                    // Stop the timer completely when pausing
                     clearInterval(timer);
-                    
-                    // --- FIX FOR PAUSE/RESUME BUG ---
-                    // 1. Get the *exact* current position of the animation
                     const computedOffset = window.getComputedStyle(progressCircle).strokeDashoffset;
-                    // 2. Turn off animations
                     progressCircle.style.transition = 'none';
-                    // 3. Freeze the dial at its current position
                     progressCircle.style.strokeDashoffset = computedOffset;
-                    
-                    // 4. (THIS IS THE FIX) Force the browser to apply the 'none' transition
-                    // and new offset immediately, cleaning the animation state.
                     void progressCircle.offsetWidth;
-                    // ---------------------------------
-                    
                 } else {
                     startButton.textContent = "Pause";
-                    // **UNIVERSAL FIX**: Also apply the 50ms delay here
-                    // to ensure a clean animation state on resume.
-                    setTimeout(startTimer, 50); 
+                    setTimeout(startTimer, 50);
                 }
             }
 
-            // --- UI & Audio Helper Functions ---
-
-            /**
-             * Instantly resets the timer display and circle to the start state.
-             */
             function resetTimerDisplay() {
                 timerDisplay.textContent = timeLeft;
-                
-                // Instantly reset the circle to 0% full (offset = circumference)
                 progressCircle.style.transition = 'none';
                 progressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
-
-                // **THE FIX**: Force browser to apply the 'transition: none' style *immediately*
-                // by triggering a reflow. This prevents the "slow rewind" animation.
                 void progressCircle.offsetWidth;
             }
-
 
             function updateColors(type) {
                 let colorClass = 'blue';
                 let suffix = '400';
-                
                 if (type === 'work') colorClass = 'blue';
                 if (type === 'rest') colorClass = 'green';
                 if (type === 'ready') colorClass = 'indigo';
-                if (type === 'complete') {
-                    colorClass = 'gray';
-                    suffix = '500';
-                }
+                if (type === 'complete') { colorClass = 'gray'; suffix = '500'; }
 
-                // List of all possible colors to remove
-                const colors = ['blue', 'green', 'indigo', 'gray'];
-                const shades = ['400', '500', '600']; // Cover all bases
-
-                // Only update timer display and progress circle
                 const elements = [timerDisplay, progressCircle];
+                const colors = ['blue', 'green', 'indigo', 'gray'];
+                const shades = ['400', '500', '600'];
 
                 elements.forEach(el => {
-                    colors.forEach(c => {
-                        shades.forEach(s => {
-                            el.classList.remove(`text-${c}-${s}`);
-                        });
-                    });
-                });
-                
-                // Add new colors
-                elements.forEach(el => {
+                    colors.forEach(c => shades.forEach(s => el.classList.remove(`text-${c}-${s}`)));
                     el.classList.add(`text-${colorClass}-${suffix}`);
                 });
-
-                // Removed special handling for title
             }
 
             function playNote(frequency, duration, type = 'sine') {
                 if (!isAudioReady || !audioContext) return;
-
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-
-                oscillator.type = type;
-                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-                
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.01);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
-
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + duration);
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                gain.gain.setValueAtTime(0, audioContext.currentTime);
+                gain.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start(audioContext.currentTime);
+                osc.stop(audioContext.currentTime + duration);
             }
 
-            function playCountdownBeep() {
-                playNote(880, 0.1, 'sine');
+            function playCountdownBeep() { playNote(880, 0.1, 'sine'); }
+            function playStartBeep() { playNote(440, 0.2, 'triangle'); }
+            function playCompleteChime() { 
+                if (!isAudioReady) return;
+                playNote(523.25, 0.3); playNote(659.25, 0.3); playNote(783.99, 0.3); playNote(1046.50, 0.4);
             }
-
-            function playStartBeep() {
-                playNote(440, 0.2, 'triangle');
-            }
-
-            function playCompleteChime() {
-                if (!isAudioReady || !audioContext) return;
-                playNote(523.25, 0.3, 'sine'); // C5
-                playNote(659.25, 0.3, 'sine'); // E5
-                playNote(783.99, 0.3, 'sine'); // G5
-                playNote(1046.50, 0.4, 'sine'); // C6
-            }
-            
             function playWorkoutStartChime() {
-                if (!isAudioReady || !audioContext) return;
-                playNote(261.63, 0.2, 'triangle'); // C4
-                playNote(329.63, 0.2, 'triangle'); // E4
-                playNote(392.00, 0.2, 'triangle'); // G4
+                if (!isAudioReady) return;
+                playNote(261.63, 0.2, 'triangle'); playNote(329.63, 0.2, 'triangle'); playNote(392.00, 0.2, 'triangle');
             }
             
-            // --- Event Listeners ---
-            startButton.addEventListener('click', handleStartPauseClick); 
-            
-            // --- Initial Setup ---
+            startButton.addEventListener('click', handleStartPauseClick);
             createWorkoutSequence();
-            loadExercise(0); // Load the "Get Ready" state initially
-
+            loadExercise(0);
         });
     </script>
 </body>
