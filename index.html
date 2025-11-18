@@ -142,25 +142,31 @@
             });
 
             // --- Native Web Audio API Setup ---
-// --- Native Web Audio API Setup ---
-let audioContext;
-let isAudioReady = false;
+            let audioContext;
+            let isAudioReady = false;
 
-try {
-    // Attempt to create the context
-    const AudioCtor = window.AudioContext || window.webkitAudioContext;
-    if (AudioCtor) {
-        audioContext = new AudioCtor();
-        isAudioReady = (audioContext.state === 'running');
-    } else {
-        // If the constructor doesn't exist, throw manually to hit the catch block
-        throw new Error("Web Audio API not found");
-    }
-} catch (e) {
-    console.warn("Audio is not supported or failed to load. App will run in silent mode.", e);
-    // We do NOT disable the button or return. We just let the app continue silently.
-    isAudioReady = false;
-}
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                isAudioReady = (audioContext.state === 'running');
+            } catch (e) {
+                console.error("Web Audio API is not supported in this browser.", e);
+                showMessage("Audio Error", "Your browser does not support the Web Audio API needed for sounds.");
+                startButton.disabled = true;
+                startButton.textContent = "Audio Not Supported";
+                startButton.classList.add('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            async function unlockAudio() {
+                if (isAudioReady) return;
+                try {
+                    await audioContext.resume();
+                    isAudioReady = true;
+                    console.log("Audio Context Unlocked.");
+                } catch (e) {
+                    console.warn("Could not unlock audio context:", e);
+                }
+            }
             
             // Try to unlock on any first click, for restrictive environments
             // document.body.addEventListener('click', unlockAudio, { once: true });
