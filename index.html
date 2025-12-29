@@ -182,42 +182,42 @@
           if (view === 'history') {
             return (
               <div className="min-h-screen bg-stone-950 text-stone-200 font-sans">
-                <div className="max-w-md mx-auto min-h-screen flex flex-col bg-stone-900 shadow-2xl shadow-black/50">
-                  <header className="p-6 border-b border-stone-800 flex items-center gap-4">
+                <div className="max-w-lg mx-auto min-h-screen flex flex-col bg-stone-900 shadow-2xl shadow-black/50">
+                  <header className="p-8 border-b border-stone-800 flex items-center gap-4">
                     <button 
                       onClick={() => setView('workout')}
-                      className="p-2 -ml-2 hover:bg-stone-800 rounded-full transition-colors"
+                      className="p-3 -ml-3 hover:bg-stone-800 rounded-full transition-colors"
                     >
-                      <ChevronLeft size={24} />
+                      <ChevronLeft size={28} />
                     </button>
-                    <h1 className="text-xl font-bold text-white">Workout History</h1>
+                    <h1 className="text-2xl font-bold text-white">Workout History</h1>
                   </header>
-                  <main className="flex-1 p-6 overflow-y-auto">
+                  <main className="flex-1 p-8 overflow-y-auto">
                     {history.length === 0 ? (
-                      <div className="text-center text-stone-500 py-10">
-                        <HistoryIcon size={48} className="mx-auto mb-4 opacity-20" />
-                        <p>No workouts completed yet.</p>
+                      <div className="text-center text-stone-500 py-12">
+                        <HistoryIcon size={56} className="mx-auto mb-4 opacity-20" />
+                        <p className="text-lg">No workouts completed yet.</p>
                       </div>
                     ) : (
                       <div className="space-y-4">
                         {history.map(session => (
-                          <div key={session.id} className="bg-stone-800 p-4 rounded-xl border border-stone-700">
-                            <div className="flex justify-between items-start mb-2">
+                          <div key={session.id} className="bg-stone-800 p-5 rounded-xl border border-stone-700">
+                            <div className="flex justify-between items-start mb-3">
                               <div>
-                                <p className="font-semibold text-white">
+                                <p className="font-semibold text-white text-lg">
                                   {new Date(session.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
                                 </p>
-                                <p className="text-xs text-stone-500">
+                                <p className="text-sm text-stone-500">
                                   {new Date(session.date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                                 </p>
                               </div>
-                              <span className={`px-2 py-1 rounded text-xs font-bold ${
+                              <span className={`px-3 py-1 rounded text-sm font-bold ${
                                 session.percentage === 100 ? 'bg-emerald-900/50 text-emerald-400' : 'bg-stone-700 text-stone-400'
                               }`}>
                                 {session.percentage}%
                               </span>
                             </div>
-                            <div className="w-full bg-stone-900 h-1.5 rounded-full overflow-hidden">
+                            <div className="w-full bg-stone-900 h-2 rounded-full overflow-hidden">
                               <div 
                                 className={`h-full ${session.percentage === 100 ? 'bg-emerald-500' : 'bg-stone-500'}`} 
                                 style={{ width: `${session.percentage}%` }} 
@@ -236,38 +236,38 @@
           if (view === 'settings') {
             return (
               <div className="min-h-screen bg-stone-950 text-stone-200 font-sans">
-                <div className="max-w-md mx-auto min-h-screen flex flex-col bg-stone-900 shadow-2xl shadow-black/50">
-                  <header className="p-6 border-b border-stone-800 flex items-center gap-4">
+                <div className="max-w-lg mx-auto min-h-screen flex flex-col bg-stone-900 shadow-2xl shadow-black/50">
+                  <header className="p-8 border-b border-stone-800 flex items-center gap-4">
                     <button 
                       onClick={() => setView('workout')}
-                      className="p-2 -ml-2 hover:bg-stone-800 rounded-full transition-colors"
+                      className="p-3 -ml-3 hover:bg-stone-800 rounded-full transition-colors"
                     >
-                      <ChevronLeft size={24} />
+                      <ChevronLeft size={28} />
                     </button>
-                    <h1 className="text-xl font-bold text-white">Edit Routine</h1>
+                    <h1 className="text-2xl font-bold text-white">Edit Routine</h1>
                   </header>
-                  <main className="flex-1 p-6 overflow-y-auto">
-                    <p className="text-stone-400 mb-6 text-sm">Customize the target repetitions for each exercise.</p>
-                    <div className="space-y-4">
+                  <main className="flex-1 p-8 overflow-y-auto">
+                    <p className="text-stone-400 mb-8 text-base">Customize the target repetitions for each exercise.</p>
+                    <div className="space-y-5">
                       {DEFAULT_EXERCISES.map(ex => (
-                        <div key={ex.id} className="bg-stone-800 p-4 rounded-xl border border-stone-700 flex justify-between items-center">
-                          <span className="font-semibold text-stone-200 text-lg">{ex.name}</span>
-                          <div className="flex items-center gap-3">
+                        <div key={ex.id} className="bg-stone-800 p-5 rounded-xl border border-stone-700 flex justify-between items-center">
+                          <span className="font-semibold text-stone-200 text-xl">{ex.name}</span>
+                          <div className="flex items-center gap-4">
                             <div className="relative">
                               <select 
                                 value={reps[ex.id] || ex.defaultReps}
                                 onChange={(e) => updateRepCount(ex.id, e.target.value)}
-                                className="bg-stone-950 border border-stone-600 rounded-lg py-2 pl-4 pr-8 text-white font-medium focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all appearance-none cursor-pointer"
+                                className="bg-stone-950 border border-stone-600 rounded-lg py-3 pl-5 pr-10 text-white font-medium focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all appearance-none cursor-pointer text-lg"
                               >
                                 {REP_OPTIONS.map(val => (
                                   <option key={val} value={val}>{val}</option>
                                 ))}
                               </select>
-                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-400">
-                                <ChevronDown size={14} />
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-stone-400">
+                                <ChevronDown size={18} />
                               </div>
                             </div>
-                            <span className="text-stone-500 text-sm font-medium w-8">Reps</span>
+                            <span className="text-stone-500 text-base font-medium w-10">Reps</span>
                           </div>
                         </div>
                       ))}
@@ -280,39 +280,39 @@
 
           // Main Workout View
           return (
-            <div className="min-h-screen bg-stone-950 text-stone-200 font-sans selection:bg-emerald-900 flex items-center justify-center p-4 md:p-6">
-              <div className="w-full max-w-md bg-stone-900 shadow-2xl shadow-black/50 rounded-3xl overflow-hidden flex flex-col relative">
+            <div className="min-h-screen bg-stone-950 text-stone-200 font-sans selection:bg-emerald-900 flex items-center justify-center p-4 md:p-8">
+              <div className="w-full max-w-lg bg-stone-900 shadow-2xl shadow-black/50 rounded-3xl overflow-hidden flex flex-col relative">
                 
-                <header className="p-6 pb-2">
-                  <div className="flex justify-between items-center mb-6">
+                <header className="p-8 pb-4">
+                  <div className="flex justify-between items-center mb-8">
                     <div>
-                      <h1 className="text-2xl font-bold tracking-tight text-white">Daily Workout</h1>
-                      <p className="text-stone-400 text-sm">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                      <h1 className="text-3xl font-bold tracking-tight text-white">Daily Workout</h1>
+                      <p className="text-stone-400 text-base">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                        <button 
                         onClick={() => setView('history')}
-                        className="p-2 rounded-full bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-white transition-colors"
+                        className="p-3 rounded-full bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-white transition-colors"
                         title="History"
                       >
-                        <Clock size={20} />
+                        <Clock size={24} />
                       </button>
                       <button 
                         onClick={() => setView('settings')}
-                        className="bg-emerald-900/30 text-emerald-400 p-2 rounded-full hover:bg-emerald-900/50 transition-colors"
+                        className="bg-emerald-900/30 text-emerald-400 p-3 rounded-full hover:bg-emerald-900/50 transition-colors"
                         title="Edit Routine"
                       >
-                        <Activity size={24} />
+                        <Activity size={28} />
                       </button>
                     </div>
                   </div>
 
-                  <div className="mb-6">
-                    <div className="flex justify-between text-xs font-medium text-stone-500 mb-2">
+                  <div className="mb-8">
+                    <div className="flex justify-between text-sm font-medium text-stone-500 mb-3">
                       <span>Progress</span>
                       <span>{calculateProgress()}%</span>
                     </div>
-                    <div className="h-2 w-full bg-stone-800 rounded-full overflow-hidden">
+                    <div className="h-3 w-full bg-stone-800 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-emerald-500 transition-all duration-500 ease-out"
                         style={{ width: `${calculateProgress()}%` }}
@@ -320,12 +320,12 @@
                     </div>
                   </div>
 
-                  <div className="flex space-x-2 mb-2">
+                  <div className="flex space-x-3 mb-4">
                     {ROUNDS.map((round) => {
                       const done = isRoundComplete(round);
                       const active = activeRound === round;
                       
-                      let buttonClasses = "flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-1 ";
+                      let buttonClasses = "flex-1 py-3 text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ";
                       
                       if (active) {
                         if (done) {
@@ -348,15 +348,15 @@
                           className={buttonClasses}
                         >
                           Round {round}
-                          {done && <Check size={12} className={active && done ? "text-emerald-900" : "text-emerald-400"} />}
+                          {done && <Check size={16} className={active && done ? "text-emerald-900" : "text-emerald-400"} />}
                         </button>
                       );
                     })}
                   </div>
                 </header>
 
-                <main className="px-6 py-4">
-                  <div className="space-y-3">
+                <main className="px-8 py-6">
+                  <div className="space-y-4">
                     {DEFAULT_EXERCISES.map((exercise, index) => {
                       const id = `${activeRound}-${index}`;
                       const isDone = completed.includes(id);
@@ -367,26 +367,26 @@
                           key={exercise.id}
                           onClick={() => toggleExercise(activeRound, index)}
                           className={`
-                            group relative overflow-hidden p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer select-none
+                            group relative overflow-hidden p-5 rounded-xl border-2 transition-all duration-200 cursor-pointer select-none
                             ${isDone 
                               ? 'border-emerald-500 bg-emerald-900/20' 
                               : 'border-stone-800 bg-stone-900 hover:border-stone-700 hover:shadow-sm'}
                           `}
                         >
                           <div className="flex items-center justify-between relative z-10">
-                            <div className="flex items-center gap-4 w-full">
+                            <div className="flex items-center gap-5 w-full">
                               <div className={`
-                                flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-200
+                                flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200
                                 ${isDone ? 'bg-emerald-500 text-white' : 'bg-stone-800 text-stone-600'}
                               `}>
-                                <Check size={14} strokeWidth={3} />
+                                <Check size={18} strokeWidth={3} />
                               </div>
                               
                               <div className="flex-1">
-                                <h3 className={`font-semibold text-lg ${isDone ? 'text-emerald-100' : 'text-stone-200'}`}>
+                                <h3 className={`font-semibold text-xl ${isDone ? 'text-emerald-100' : 'text-stone-200'}`}>
                                   {exercise.name}
                                 </h3>
-                                <p className={`text-sm mt-0.5 ${isDone ? 'text-emerald-400' : 'text-stone-500'}`}>
+                                <p className={`text-base mt-1 ${isDone ? 'text-emerald-400' : 'text-stone-500'}`}>
                                   {currentReps} Reps
                                 </p>
                               </div>
@@ -404,28 +404,28 @@
                 </main>
 
                 {showConfetti && (
-                  <footer className="p-6 bg-stone-950 border-t border-stone-800">
+                  <footer className="p-8 bg-stone-950 border-t border-stone-800">
                     <div className="text-center animate-fade-in">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-900/30 text-yellow-400 rounded-full mb-3 animate-bounce">
-                        <Trophy size={32} />
+                      <div className="inline-flex items-center justify-center w-20 h-20 bg-yellow-900/30 text-yellow-400 rounded-full mb-4 animate-bounce">
+                        <Trophy size={40} />
                       </div>
-                      <h2 className="text-xl font-bold text-white">Workout Complete!</h2>
-                      <p className="text-stone-400 text-sm mb-4">Great job crushing your goals today.</p>
+                      <h2 className="text-2xl font-bold text-white">Workout Complete!</h2>
+                      <p className="text-stone-400 text-base mb-6">Great job crushing your goals today.</p>
                       <button 
                         onClick={saveAndReset}
-                        className="w-full py-3 bg-stone-100 text-stone-900 rounded-xl font-semibold hover:bg-stone-200 transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-stone-100 text-stone-900 rounded-xl font-semibold hover:bg-stone-200 transition-colors flex items-center justify-center gap-3 text-lg"
                       >
-                        Save & Start New <RotateCcw size={16} />
+                        Save & Start New <RotateCcw size={20} />
                       </button>
                     </div>
                   </footer>
                 )}
                 
                 {!showConfetti && completed.length > 0 && (
-                   <div className="p-4 text-center">
+                   <div className="p-5 text-center">
                      <button 
                       onClick={justReset}
-                      className="text-xs text-stone-700 hover:text-stone-500 transition-colors py-2"
+                      className="text-sm text-stone-700 hover:text-stone-500 transition-colors py-2"
                      >
                        Clear Progress
                      </button>
