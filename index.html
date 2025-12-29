@@ -3,322 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7 Minute Workout</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Daily Workout Tracker</title>
     
-    <script src="https://cdn.tailwindcss.com" onerror="alert('CRITICAL ERROR: Tailwind CSS failed to load.\n\n1. Check your internet connection.\n2. Disable AdBlockers for this page.\n3. If on Windows, Right Click the file > Properties > Check \'Unblock\'.')"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel (to compile JSX in browser) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+        body { font-family: 'Inter', sans-serif; }
+        /* Remove arrows from number input */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.5s ease-out forwards;
         }
     </style>
 </head>
+<body class="bg-stone-950 text-stone-200">
+    <div id="root"></div>
 
-<div class="hidden 
-    text-blue-400 text-blue-500 text-blue-600 
-    text-green-400 text-green-500 text-green-600 
-    text-indigo-400 text-indigo-500 text-indigo-600 
-    text-gray-400 text-gray-500 text-gray-600">
-</div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-<body class="bg-gray-800 md:bg-gray-900 text-gray-100 flex justify-center min-h-dvh overflow-hidden md:overflow-auto sm:items-center">
+        // --- ICON COMPONENTS (Inline SVG to avoid build steps) ---
+        const Check = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 6 9 17 4 12"/></svg>
+        );
+        const RotateCcw = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/></svg>
+        );
+        const Trophy = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17"/><path d="M14 14.66V17"/><path d="M18 2h-5.3a2 2 0 0 0-1.93-1.35h-1.54A2 2 0 0 0 7.3 2H2v10a2 2 0 0 0 2 2h1.67a2 2 0 0 1 1.62 1.1l.65 1.5a2 2 0 0 0 1.83 1.19h2.46a2 2 0 0 0 1.83-1.19l.65-1.5a2 2 0 0 1 1.62-1.1H22V2z"/></svg>
+        );
+        const Activity = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        );
+        const Clock = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        );
+        const ChevronLeft = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="15 18 9 12 15 6"/></svg>
+        );
+        const HistoryIcon = ({ size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/><path d="M3 3v9h9"/></svg>
+        );
+        const ChevronDown = ({ size = 16, className = "" }) => (
+             <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="6 9 12 15 18 9"/></svg>
+        );
 
-    <main class="w-full max-w-md p-6 sm:p-10 bg-gray-800 text-center flex flex-col justify-around min-h-dvh sm:block sm:min-h-0 sm:rounded-2xl sm:shadow-xl">
-        
-        <div id="statusEl" class="h-8 text-2xl font-bold uppercase tracking-wider text-blue-500">
-            7 Minute Workout
-        </div>
-        
-        <div id="exerciseEl" class="h-16 text-5xl sm:text-4xl font-bold my-4 flex items-center justify-center">
-            Get Ready
-        </div>
 
-        <div id="timerEl" class="relative w-56 h-56 sm:w-64 sm:h-64 mx-auto my-6 rounded-full shadow-inner flex items-center justify-center bg-gray-700 cursor-default">
-            <svg class="w-full h-full" viewBox="0 0 120 120">
-                <circle class="text-gray-600" cx="60" cy="60" r="54" fill="none" stroke="currentColor" stroke-width="12" />
-                <circle id="progressCircle" class="text-blue-500" cx="60" cy="60" r="54" fill="none"
-                    stroke="currentColor" stroke-width="12"
-                    transform="rotate(-90 60 60)"
-                    stroke-dasharray="339.29" 
-                    stroke-dashoffset="339.29" /> 
-            </svg>
-            
-            <div id="timerDisplay" class="absolute text-8xl sm:text-8xl font-black text-indigo-400">10</div>
-            
-            <div id="pausePlayOverlay" class="absolute inset-0 w-full h-full rounded-full bg-gray-800/90 flex items-center justify-center hidden transition-opacity duration-300">
-                <svg id="pauseIcon" class="w-20 h-20 text-blue-400 hidden" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 00-.75.75v12c0 .414.336.75.75.75h2.5a.75.75 0 00.75-.75v-12a.75.75 0 00-.75-.75h-2.5zm8 0a.75.75 0 00-.75.75v12c0 .414.336.75.75.75h2.5a.75.75 0 00.75-.75v-12a.75.75 0 00-.75-.75h-2.5z" clip-rule="evenodd" /></svg>
-                <svg id="playIcon" class="w-20 h-20 text-blue-400 hidden" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" /></svg>
-            </div>
-        </div>
+        // --- APP DATA ---
+        const DEFAULT_EXERCISES = [
+          { id: 'pushups', name: 'Push-Ups', defaultReps: 20 },
+          { id: 'squats', name: 'Squats', defaultReps: 20 },
+          { id: 'bridges', name: 'Glute Bridges', defaultReps: 20 },
+          { id: 'pullups', name: 'Pull-Ups', defaultReps: 20 },
+          { id: 'crunches', name: 'Abdominal Crunches', defaultReps: 20 },
+        ];
 
-        <div class="h-14 uppercase">
-            <div class="text-lg font-semibold text-gray-400 tracking-wide">Next Up:</div>
-            <div id="nextExerciseEl" class="text-2xl font-bold">Jumping Jacks</div>
-        </div>
+        const ROUNDS = [1, 2, 3];
+        const REP_OPTIONS = [20, 25, 30, 35, 40, 45, 50, 55, 60];
 
-        <button id="startButton" class="w-full p-4 mt-6 bg-blue-500 text-white rounded-lg text-xl font-bold uppercase hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-800 transition-all duration-300 transform active:scale-95">
-            Start Workout
-        </button>
+        // --- MAIN COMPONENT ---
+        function App() {
+          // --- STATE ---
+          const [view, setView] = useState('workout');
 
-    </main>
+          const [reps, setReps] = useState(() => {
+            const saved = localStorage.getItem('dailyWorkoutReps');
+            if (saved) return JSON.parse(saved);
+            const defaults = {};
+            DEFAULT_EXERCISES.forEach(ex => defaults[ex.id] = ex.defaultReps);
+            return defaults;
+          });
 
-    <div id="messageBox" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
-            <h3 id="messageTitle" class="text-lg font-bold mb-4">Message</h3>
-            <p id="messageText" class="text-gray-300 mb-6">This is a message.</p>
-            <button id="messageCloseButton" class="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-800">OK</button>
-        </div>
-    </div>
+          const [completed, setCompleted] = useState(() => {
+            const saved = localStorage.getItem('dailyWorkoutProgress');
+            return saved ? JSON.parse(saved) : [];
+          });
 
-    <script>
-        window.addEventListener('load', () => {
-            
-            const statusEl = document.getElementById('statusEl');
-            const exerciseEl = document.getElementById('exerciseEl');
-            const timerDisplay = document.getElementById('timerDisplay');
-            const timerEl = document.getElementById('timerEl');
-            const nextExerciseEl = document.getElementById('nextExerciseEl');
-            const startButton = document.getElementById('startButton');
-            const pausePlayOverlay = document.getElementById('pausePlayOverlay');
-            const pauseIcon = document.getElementById('pauseIcon');
-            const playIcon = document.getElementById('playIcon');
-            const progressCircle = document.getElementById('progressCircle');
+          const [history, setHistory] = useState(() => {
+            const saved = localStorage.getItem('dailyWorkoutHistory');
+            return saved ? JSON.parse(saved) : [];
+          });
 
-            const messageBox = document.getElementById('messageBox');
-            const messageTitle = document.getElementById('messageTitle');
-            const messageText = document.getElementById('messageText');
-            const messageCloseButton = document.getElementById('messageCloseButton');
+          const [activeRound, setActiveRound] = useState(1);
+          const [showConfetti, setShowConfetti] = useState(false);
 
-            function showMessage(title, text) {
-                messageTitle.textContent = title;
-                messageText.textContent = text;
-                messageBox.classList.remove('hidden');
+          // --- EFFECTS ---
+          useEffect(() => {
+            localStorage.setItem('dailyWorkoutReps', JSON.stringify(reps));
+          }, [reps]);
+
+          useEffect(() => {
+            localStorage.setItem('dailyWorkoutProgress', JSON.stringify(completed));
+            const totalExercises = ROUNDS.length * DEFAULT_EXERCISES.length;
+            if (completed.length === totalExercises && totalExercises > 0) {
+              setShowConfetti(true);
+            } else {
+              setShowConfetti(false);
             }
-            
-            messageCloseButton.addEventListener('click', () => {
-                messageBox.classList.add('hidden');
+          }, [completed]);
+
+          useEffect(() => {
+            localStorage.setItem('dailyWorkoutHistory', JSON.stringify(history));
+          }, [history]);
+
+          // --- ACTIONS ---
+          const toggleExercise = (round, exIndex) => {
+            const id = `${round}-${exIndex}`;
+            setCompleted(prev => {
+              if (prev.includes(id)) return prev.filter(item => item !== id);
+              return [...prev, id];
             });
+          };
 
-            let audioContext;
-            let isAudioReady = false;
-
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                isAudioReady = (audioContext.state === 'running');
-            } catch (e) {
-                console.error("Web Audio API not supported", e);
-                showMessage("Audio Error", "Your browser does not support Web Audio.");
-                startButton.disabled = true;
-                startButton.textContent = "Audio Not Supported";
+          const updateRepCount = (exerciseId, newCount) => {
+            const val = parseInt(newCount, 10);
+            if (!isNaN(val) && val >= 0) {
+              setReps(prev => ({ ...prev, [exerciseId]: val }));
             }
+          };
 
-            async function unlockAudio() {
-                if (isAudioReady) return;
-                try {
-                    await audioContext.resume();
-                    isAudioReady = true;
-                } catch (e) { console.warn(e); }
+          const saveAndReset = () => {
+            const totalPossible = ROUNDS.length * DEFAULT_EXERCISES.length;
+            const session = {
+              id: Date.now(),
+              date: new Date().toISOString(),
+              completedCount: completed.length,
+              totalCount: totalPossible,
+              percentage: Math.round((completed.length / totalPossible) * 100)
+            };
+
+            setHistory(prev => [session, ...prev]);
+            setCompleted([]);
+            setActiveRound(1);
+            setShowConfetti(false);
+          };
+
+          const justReset = () => {
+            if (confirm('Clear current progress without saving to history?')) {
+              setCompleted([]);
+              setActiveRound(1);
+              setShowConfetti(false);
             }
-            
-            const EXERCISES = ["Jumping Jacks","Wall Sit","Push-ups","Abdominal Crunch","Step-up Chair","Squats","Triceps Dip Chair","Plank","High Knees","Lunges","Push-up Rotation","Side Plank"];
-            const READY_TIME = 10;
-            const WORK_TIME = 30;
-            const REST_TIME = 10;
-            const CIRCLE_CIRCUMFERENCE = 339.29;
+          };
 
-            let workoutSequence = [];
-            let currentExerciseIndex = 0;
-            let timer = null;
-            let timeLeft = 0;
-            let isPaused = false;
-            let isStarted = false;
+          const calculateProgress = () => {
+            const total = ROUNDS.length * DEFAULT_EXERCISES.length;
+            return Math.round((completed.length / total) * 100);
+          };
 
-            async function handleStartPauseClick() {
-                if (!isAudioReady) {
-                    await unlockAudio();
-                    if (!isAudioReady) {
-                        showMessage("Audio Error", "Please click the screen once to enable audio.");
-                        return;
-                    }
-                }
-                if (!isStarted) {
-                    playWorkoutStartChime();
-                    startWorkout();
-                } else {
-                    togglePause();
-                }
-            }
+          const isRoundComplete = (round) => {
+            return DEFAULT_EXERCISES.every((_, idx) => completed.includes(`${round}-${idx}`));
+          };
 
-            function createWorkoutSequence() {
-                workoutSequence = [];
-                workoutSequence.push({ type: 'ready', name: 'Get Ready', duration: READY_TIME });
-                EXERCISES.forEach((exercise, index) => {
-                    workoutSequence.push({ type: 'work', name: exercise, duration: WORK_TIME });
-                    if (index < EXERCISES.length - 1) {
-                        workoutSequence.push({ type: 'rest', name: 'Rest', duration: REST_TIME });
-                    }
-                });
-                workoutSequence.push({ type: 'complete', name: 'Workout Complete!', duration: 0 });
-            }
+          // --- VIEWS ---
 
-            function startWorkout() {
-                isStarted = true;
-                isPaused = false;
-                currentExerciseIndex = 0;
-                clearInterval(timer);
-                createWorkoutSequence();
-                loadExercise(currentExerciseIndex);
-                startTimer();
-                startButton.textContent = "Pause";
-                pausePlayOverlay.classList.add('hidden');
-                pauseIcon.classList.add('hidden');
-                playIcon.classList.remove('hidden');
-            }
+          if (view === 'history') {
+            return (
+              <div className="min-h-screen bg-stone-950 text-stone-200 font-sans">
+                <div className="max-w-md mx-auto min-h-screen flex flex-col bg-stone-900 shadow-2xl shadow-black/50">
+                  <header className="p-6 border-b border-stone-800 flex items-center gap-4">
+                    <button 
+                      onClick={() => setView('workout')}
+                      className="p-2 -ml-2 hover:bg-stone-800 rounded-full transition-colors"
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <h1 className="text-xl font-bold text-white">Workout History</h1>
+                  </header>
+                  <main className="flex-1 p-6 overflow-y-auto">
+                    {history.length === 0 ? (
+                      <div className="text-center text-stone-500 py-10">
+                        <HistoryIcon size={48} className="mx-auto mb-4 opacity-20" />
+                        <p>No workouts completed yet.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {history.map(session => (
+                          <div key={session.id} className="bg-stone-800 p-4 rounded-xl border border-stone-700">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <p className="font-semibold text-white">
+                                  {new Date(session.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                                </p>
+                                <p className="text-xs text-stone-500">
+                                  {new Date(session.date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                              <span className={`px-2 py-1 rounded text-xs font-bold ${
+                                session.percentage === 100 ? 'bg-emerald-900/50 text-emerald-400' : 'bg-stone-700 text-stone-400'
+                              }`}>
+                                {session.percentage}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-stone-900 h-1.5 rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full ${session.percentage === 100 ? 'bg-emerald-500' : 'bg-stone-500'}`} 
+                                style={{ width: `${session.percentage}%` }} 
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </main>
+                </div>
+              </div>
+            );
+          }
 
-            function loadExercise(index) {
-                const current = workoutSequence[index];
-                const next = workoutSequence[index + 1] || { name: "All Done!" };
-                timeLeft = current.duration;
-                statusEl.textContent = "7 Minute Workout";
-                exerciseEl.textContent = current.name;
-                nextExerciseEl.textContent = next.name;
-                updateColors(current.type);
-                resetTimerDisplay(); 
+          if (view === 'settings') {
+            return (
+              <div className="min-h-screen bg-stone-950 text-stone-200 font-sans">
+                <div className="max-w-md mx-auto min-h-screen flex flex-col bg-stone-900 shadow-2xl shadow-black/50">
+                  <header className="p-6 border-b border-stone-800 flex items-center gap-4">
+                    <button 
+                      onClick={() => setView('workout')}
+                      className="p-2 -ml-2 hover:bg-stone-800 rounded-full transition-colors"
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <h1 className="text-xl font-bold text-white">Edit Routine</h1>
+                  </header>
+                  <main className="flex-1 p-6 overflow-y-auto">
+                    <p className="text-stone-400 mb-6 text-sm">Customize the target repetitions for each exercise.</p>
+                    <div className="space-y-4">
+                      {DEFAULT_EXERCISES.map(ex => (
+                        <div key={ex.id} className="bg-stone-800 p-4 rounded-xl border border-stone-700 flex justify-between items-center">
+                          <span className="font-semibold text-stone-200 text-lg">{ex.name}</span>
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <select 
+                                value={reps[ex.id] || ex.defaultReps}
+                                onChange={(e) => updateRepCount(ex.id, e.target.value)}
+                                className="bg-stone-950 border border-stone-600 rounded-lg py-2 pl-4 pr-8 text-white font-medium focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all appearance-none cursor-pointer"
+                              >
+                                {REP_OPTIONS.map(val => (
+                                  <option key={val} value={val}>{val}</option>
+                                ))}
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-400">
+                                <ChevronDown size={14} />
+                              </div>
+                            </div>
+                            <span className="text-stone-500 text-sm font-medium w-8">Reps</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </main>
+                </div>
+              </div>
+            );
+          }
 
-                if (current.type === 'complete') {
-                    startButton.textContent = "Start Over?";
-                    playCompleteChime();
-                    isStarted = false;
-                    clearInterval(timer);
-                    pausePlayOverlay.classList.remove('hidden');
-                    pauseIcon.classList.remove('hidden');
-                    playIcon.classList.add('hidden');
-                }
-            }
-            
-            function startTimer() {
-                clearInterval(timer);
-                tick();
-                timer = setInterval(tick, 1000);
-            }
+          // Main Workout View
+          return (
+            <div className="min-h-screen bg-stone-950 text-stone-200 font-sans selection:bg-emerald-900">
+              <div className="max-w-md mx-auto min-h-screen flex flex-col relative bg-stone-900 shadow-2xl shadow-black/50">
+                
+                <header className="p-6 pb-2">
+                  <div className="flex justify-between items-center mb-6">
+                    <div>
+                      <h1 className="text-2xl font-bold tracking-tight text-white">Daily Workout</h1>
+                      <p className="text-stone-400 text-sm">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                    <div className="flex gap-2">
+                       <button 
+                        onClick={() => setView('history')}
+                        className="p-2 rounded-full bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-white transition-colors"
+                        title="History"
+                      >
+                        <Clock size={20} />
+                      </button>
+                      <button 
+                        onClick={() => setView('settings')}
+                        className="bg-emerald-900/30 text-emerald-400 p-2 rounded-full hover:bg-emerald-900/50 transition-colors"
+                        title="Edit Routine"
+                      >
+                        <Activity size={24} />
+                      </button>
+                    </div>
+                  </div>
 
-         function tick() {
-    if (timeLeft <= 0) {
-        handleTimerEnd();
-        return;
-    }
-    timerDisplay.textContent = timeLeft;
-    const current = workoutSequence[currentExerciseIndex];
+                  <div className="mb-6">
+                    <div className="flex justify-between text-xs font-medium text-stone-500 mb-2">
+                      <span>Progress</span>
+                      <span>{calculateProgress()}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-stone-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-emerald-500 transition-all duration-500 ease-out"
+                        style={{ width: `${calculateProgress()}%` }}
+                      />
+                    </div>
+                  </div>
 
-    // --- NEW CODE STARTS HERE ---
-    // Check if we are doing the Side Plank and if we are exactly halfway through
-    if (current.name === "Side Plank" && timeLeft === (current.duration / 2)) {
-        playHalfwayBeep();
-    }
-    // --- NEW CODE ENDS HERE ---
+                  <div className="flex space-x-2 mb-2">
+                    {ROUNDS.map((round) => {
+                      const done = isRoundComplete(round);
+                      const active = activeRound === round;
+                      
+                      let buttonClasses = "flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-1 ";
+                      
+                      if (active) {
+                        if (done) {
+                          buttonClasses += "bg-emerald-500 text-emerald-950 shadow-lg shadow-emerald-500/20";
+                        } else {
+                          buttonClasses += "bg-stone-100 text-stone-900 shadow-lg shadow-white/5";
+                        }
+                      } else {
+                        if (done) {
+                          buttonClasses += "bg-emerald-900/40 text-emerald-400 border border-emerald-900/50";
+                        } else {
+                          buttonClasses += "bg-stone-800 text-stone-400 hover:bg-stone-700";
+                        }
+                      }
 
-    const progress = Math.min(1, (current.duration - (timeLeft - 1)) / current.duration);
-    const offset = CIRCLE_CIRCUMFERENCE * (1 - progress);
-    progressCircle.style.transition = 'stroke-dashoffset 1s linear';
-    progressCircle.style.strokeDashoffset = offset;
+                      return (
+                        <button
+                          key={round}
+                          onClick={() => setActiveRound(round)}
+                          className={buttonClasses}
+                        >
+                          Round {round}
+                          {done && <Check size={12} className={active && done ? "text-emerald-900" : "text-emerald-400"} />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </header>
 
-    if (timeLeft - 1 <= 2 && timeLeft - 1 >= 0) playCountdownBeep();
-    timeLeft--;
-}
-            
-            function handleTimerEnd() {
-                clearInterval(timer);
-                currentExerciseIndex++;
-                if (currentExerciseIndex < workoutSequence.length) {
-                    if (workoutSequence[currentExerciseIndex].type !== 'complete') playStartBeep();
-                    loadExercise(currentExerciseIndex);
-                    if (workoutSequence[currentExerciseIndex].type !== 'complete') setTimeout(startTimer, 50);
-                }
-            }
+                <main className="flex-1 px-6 py-4 overflow-y-auto">
+                  <div className="space-y-3">
+                    {DEFAULT_EXERCISES.map((exercise, index) => {
+                      const id = `${activeRound}-${index}`;
+                      const isDone = completed.includes(id);
+                      const currentReps = reps[exercise.id] || exercise.defaultReps;
 
-            function togglePause() {
-                if (!isStarted || workoutSequence[currentExerciseIndex].type === 'complete') return;
-                isPaused = !isPaused;
-                pausePlayOverlay.classList.toggle('hidden', !isPaused);
-                pauseIcon.classList.toggle('hidden', !isPaused);
-                playIcon.classList.toggle('hidden', isPaused);
+                      return (
+                        <div 
+                          key={exercise.id}
+                          onClick={() => toggleExercise(activeRound, index)}
+                          className={`
+                            group relative overflow-hidden p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer select-none
+                            ${isDone 
+                              ? 'border-emerald-500 bg-emerald-900/20' 
+                              : 'border-stone-800 bg-stone-900 hover:border-stone-700 hover:shadow-sm'}
+                          `}
+                        >
+                          <div className="flex items-center justify-between relative z-10">
+                            <div className="flex items-center gap-4 w-full">
+                              <div className={`
+                                flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-200
+                                ${isDone ? 'bg-emerald-500 text-white' : 'bg-stone-800 text-stone-600'}
+                              `}>
+                                <Check size={14} strokeWidth={3} />
+                              </div>
+                              
+                              <div className="flex-1">
+                                <h3 className={`font-semibold text-lg ${isDone ? 'text-emerald-100' : 'text-stone-200'}`}>
+                                  {exercise.name}
+                                </h3>
+                                <p className={`text-sm mt-0.5 ${isDone ? 'text-emerald-400' : 'text-stone-500'}`}>
+                                  {currentReps} Reps
+                                </p>
+                              </div>
+                            </div>
+                          </div>
 
-                if (isPaused) {
-                    startButton.textContent = "Resume";
-                    clearInterval(timer);
-                    const computedOffset = window.getComputedStyle(progressCircle).strokeDashoffset;
-                    progressCircle.style.transition = 'none';
-                    progressCircle.style.strokeDashoffset = computedOffset;
-                    void progressCircle.offsetWidth;
-                } else {
-                    startButton.textContent = "Pause";
-                    setTimeout(startTimer, 50);
-                }
-            }
+                          <div className={`
+                            absolute inset-0 bg-emerald-500/10 transform origin-left transition-transform duration-300 ease-out
+                            ${isDone ? 'scale-x-100' : 'scale-x-0'}
+                          `} />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </main>
 
-            function resetTimerDisplay() {
-                timerDisplay.textContent = timeLeft;
-                progressCircle.style.transition = 'none';
-                progressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
-                void progressCircle.offsetWidth;
-            }
+                {showConfetti && (
+                  <footer className="p-6 bg-stone-950 border-t border-stone-800">
+                    <div className="text-center animate-fade-in">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-900/30 text-yellow-400 rounded-full mb-3 animate-bounce">
+                        <Trophy size={32} />
+                      </div>
+                      <h2 className="text-xl font-bold text-white">Workout Complete!</h2>
+                      <p className="text-stone-400 text-sm mb-4">Great job crushing your goals today.</p>
+                      <button 
+                        onClick={saveAndReset}
+                        className="w-full py-3 bg-stone-100 text-stone-900 rounded-xl font-semibold hover:bg-stone-200 transition-colors flex items-center justify-center gap-2"
+                      >
+                        Save & Start New <RotateCcw size={16} />
+                      </button>
+                    </div>
+                  </footer>
+                )}
+                
+                {!showConfetti && completed.length > 0 && (
+                   <div className="absolute bottom-4 left-0 right-0 text-center">
+                     <button 
+                      onClick={justReset}
+                      className="text-xs text-stone-700 hover:text-stone-500 transition-colors"
+                     >
+                       Clear Progress
+                     </button>
+                   </div>
+                )}
 
-            function updateColors(type) {
-                let colorClass = 'blue';
-                let suffix = '400';
-                if (type === 'work') colorClass = 'blue';
-                if (type === 'rest') colorClass = 'green';
-                if (type === 'ready') colorClass = 'indigo';
-                if (type === 'complete') { colorClass = 'gray'; suffix = '500'; }
+              </div>
+            </div>
+          );
+        }
 
-                const elements = [timerDisplay, progressCircle];
-                const colors = ['blue', 'green', 'indigo', 'gray'];
-                const shades = ['400', '500', '600'];
-
-                elements.forEach(el => {
-                    colors.forEach(c => shades.forEach(s => el.classList.remove(`text-${c}-${s}`)));
-                    el.classList.add(`text-${colorClass}-${suffix}`);
-                });
-            }
-
-            function playNote(frequency, duration, type = 'sine') {
-                if (!isAudioReady || !audioContext) return;
-                const osc = audioContext.createOscillator();
-                const gain = audioContext.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(frequency, audioContext.currentTime);
-                gain.gain.setValueAtTime(0, audioContext.currentTime);
-                gain.gain.linearRampToValueAtTime(0.5, audioContext.currentTime + 0.01);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioContext.destination);
-                osc.start(audioContext.currentTime);
-                osc.stop(audioContext.currentTime + duration);
-            }
-
-            function playCountdownBeep() { playNote(880, 0.1, 'sine'); }
-            function playStartBeep() { playNote(440, 0.2, 'triangle'); }
-            function playHalfwayBeep() { playNote(600, 0.15, 'sine'); }
-            function playCompleteChime() { 
-                if (!isAudioReady) return;
-                playNote(523.25, 0.3); playNote(659.25, 0.3); playNote(783.99, 0.3); playNote(1046.50, 0.4);
-            }
-            function playWorkoutStartChime() {
-                if (!isAudioReady) return;
-                playNote(261.63, 0.2, 'triangle'); playNote(329.63, 0.2, 'triangle'); playNote(392.00, 0.2, 'triangle');
-            }
-            
-            startButton.addEventListener('click', handleStartPauseClick);
-            createWorkoutSequence();
-            loadExercise(0);
-        });
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
