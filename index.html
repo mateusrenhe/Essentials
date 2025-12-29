@@ -280,8 +280,8 @@
 
           // Main Workout View
           return (
-            <div className="min-h-screen bg-stone-950 text-stone-200 font-sans selection:bg-emerald-900">
-              <div className="max-w-md mx-auto min-h-screen flex flex-col relative bg-stone-900 shadow-2xl shadow-black/50">
+            <div className="min-h-screen bg-stone-950 text-stone-200 font-sans selection:bg-emerald-900 flex items-center justify-center p-4 md:p-6">
+              <div className="w-full max-w-md bg-stone-900 shadow-2xl shadow-black/50 rounded-3xl overflow-hidden flex flex-col relative">
                 
                 <header className="p-6 pb-2">
                   <div className="flex justify-between items-center mb-6">
@@ -355,7 +355,7 @@
                   </div>
                 </header>
 
-                <main className="flex-1 px-6 py-4 overflow-y-auto">
+                <main className="px-6 py-4">
                   <div className="space-y-3">
                     {DEFAULT_EXERCISES.map((exercise, index) => {
                       const id = `${activeRound}-${index}`;
@@ -422,10 +422,10 @@
                 )}
                 
                 {!showConfetti && completed.length > 0 && (
-                   <div className="absolute bottom-4 left-0 right-0 text-center">
+                   <div className="p-4 text-center">
                      <button 
                       onClick={justReset}
-                      className="text-xs text-stone-700 hover:text-stone-500 transition-colors"
+                      className="text-xs text-stone-700 hover:text-stone-500 transition-colors py-2"
                      >
                        Clear Progress
                      </button>
